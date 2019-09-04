@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>计算器</title>
+    <style>
+        body{
+            margin:0;
+        }
+       #calc-container{
+           width:200px;
+       }
+       .row{
+           display:table;
+           table-layout:fixed;
+           width:200px;
+           user-select: none;
+       }
+       .column{
+           display:table-cell;
+       }
+       .cal-btn{
+           width:25px;
+           height:45px;
+           background-color:#ccc;
+           line-height: 45px;
+           text-align:center;
+           font-size:32px;
+           font-weight:100;
+           border:1px solid gray;
+           cursor: pointer;
+       }
+       .cal-btn:hover{
+           background:orange;
+       }
+       #calc-clear{
+           width:51px;
+       }
+       #calc-zero{
+           width:51px;
+           border-radius:0 0 0 7px;
+       }
+       .calc-operator{
+           background:orange;
+           color:#fff;
+       }
+       #calc-equals{
+           border-radius:0 0 7px
+       }
+       #calc-display{
+           height:80px;
+           width:100%;
+           background:#383838;
+           color:#fff;
+           font-size:48px;
+           line-height:80px;
+           text-align:right;
+           /* padding:12px ; */
+           border-radius:7px 7px 0 0 ;
+           /* border:1px solid gray; */
+           /* border-bottom:none; */
+       }
+    </style>
+</head>
+<body>
+    <div id="calc-container">
+        <div class="row"id="calc-display">
+            <div class="column">0</div>
+        </div>
+        <div class="row">
+            <div class="column cal-btn"id="calc-clear">AC</div>
+            <div class="column cal-btn"id="calc-back">&lt-</div>
+            <div class="column cal-btn calc-operator"id="calc-divide">÷</div>
+        </div>
+        <div class="row">
+            <div class="column cal-btn calc-num">7</div>
+            <div class="column cal-btn calc-num">8</div>
+            <div class="column cal-btn calc-num">9</div>
+            <div class="column cal-btn calc-operator"id="calc-multipal">x</div>
+        </div>
+        <div class="row">
+                <div class="column cal-btn calc-num">4</div>
+                <div class="column cal-btn calc-num">5</div>
+                <div class="column cal-btn calc-num">6</div>
+                <div class="column cal-btn calc-operator"id="calc-minus">-</div>
+        </div>
+        <div class="row">
+                <div class="column cal-btn calc-num">1</div>
+                <div class="column cal-btn calc-num">2</div>
+                <div class="column cal-btn calc-num">3</div>
+                <div class="column cal-btn calc-operator"id="calc-add">+</div>
+        </div>
+        <div class="row">
+            <div class="column cal-btn calc-num"id="calc-zero">0</div>
+            <div class="column cal-btn"id="decimal-btn">.</div>
+            <div class="column cal-btn calc-operator"id="calc-equals">=</div>
+        </div>
+    </div>
+    <script>
+      //点击数字的按钮时，我们应该改变上面的显示
+      var calcNums = document.getElementsByClassName("calc-num");
+      var calcDisplay = document.getElementById("calc-display");
+      var displayVal = "0";
+      var calcAry = [];
+      var flag=false;  //判断当前是否为加减乘除，是的时候将displayVal变为空
+    //更新显示
+    function updateDisplay(event){
+        var num =event.target.innerText;
+        if(displayVal ==="0"){
+            displayVal = "";
+        }
+        if(flag){
+            displayVal = "";
+            flag = false;
+        }
+        displayVal = displayVal + num;
+        // console.log(displayVal);
+        calcDisplay.innerText = displayVal;
+    }
+    for(var i =0;i<calcNums.length;i++){
+        calcNums[i].addEventListener("click",updateDisplay);
+    }
+     // 点击计算机的按钮的时候，计算+ - */我们保存  数还有操作   点击 = 计算
+     var calcOperator = document.getElementsByClassName("calc-operator");
+    //  console.log(calcOperator);
+    function handleOperator(event){
+        // console.log(event.target.id);
+        switch(event.target.id){
+            case "calc-add":calcAry.push(displayVal)
+                            calcAry.push("+");
+                            flag = true;
+            break;
+            case "calc-minus":calcAry.push(displayVal)
+                            calcAry.push("-");
+                            flag = true;
+            break;
+            case "calc-multipal":calcAry.push(displayVal)
+                            calcAry.push("*");
+                            flag = true;
+            break;
+            case "calc-divide":calcAry.push(displayVal)
+                            calcAry.push("/");
+                            flag = true;
+            break;
+            case "calc-equals":calcAry.push(displayVal);
+                               var result = eval(calcAry.join(" "));
+                               calcDisplay.innerText = result;
+                               flag = true;
+                               calcAry = [];
+            break;        
+         }
+        // console.log(calcAry);
+    }
+    for(var i =0 ;i<calcOperator.length;i++){
+        calcOperator[i].addEventListener("click",handleOperator);
+    }
+
+    //AC按钮清零  ，初始化
+    var calcClear = document.getElementById("calc-clear");
+    calcClear.addEventListener("click",function(){
+        displayVal = "0";
+        calcAry = [];
+        flag = false;
+        calcDisplay.innerText = displayVal;
+    });
+    //回退按钮  字符串的截取
+    var calcBack = document.getElementById("calc-back");
+    calcBack.addEventListener("click",function(){
+        displayVal = displayVal.slice(0,displayVal.length-1);
+        if(displayVal ==""){
+           displayVal = "0";
+        }
+        calcDisplay.innerText = displayVal;
+    });
+    //.把.加上   只能有一个点
+   var decimalBtn = document.getElementById("decimal-btn");
+   decimalBtn.addEventListener("click",function(){
+        if(!displayVal.includes(".")){
+            displayVal = displayVal + ".";
+        }
+        calcDisplay.innerText = displayVal;
+  });
+    </script>
+</body>
+</html>
